@@ -1,66 +1,116 @@
+# 🔧 Hack the Programmer: TL866/T48 Firmware & Dump Tools on Linux
 
-# Atualização de Firmware e Testes com TL866 no Linux
-
-Este guia explica como atualizar o firmware de gravadores TL866 (como TL866A/CS) no Linux, utilizando a ferramenta `libxgecu` e posteriormente fazer *dump* e visualizar os dados com `minipro`.
+> A self-contained Linux tool to update TL866A/CS/T48 firmware and test dumps using `libxgecu` and `minipro`.
 
 ---
 
-## ✅ Pré-requisitos
+## 📸 Supported Programmer
 
-- Python 3.12 ou compatível
-- `poetry` instalado
-- Pacotes:
+<div align="center">
+  <img src="images/tl48_top.jpeg" alt="TL866 Programmer Top View" width="400"/>
+  <br/>
+  <img src="images/tl48_bottom.jpeg" alt="TL866 Programmer USB Side" width="400"/>
+</div>
+
+---
+
+## ✅ Requirements
+
+- Python 3.12 or compatible
+- [`poetry`](https://python-poetry.org/) installed
+- Required packages:
   ```bash
   sudo apt update
-  sudo apt install git p7zip-full python3-pip
+  sudo apt install git p7zip-full python3-pip libusb-1.0-0-dev build-essential pkg-config
   ```
 
 ---
 
-## 📦 Instalar o `libxgecu`
+## 📦 Cloning the Project (with Submodules)
 
-1. Clone o repositório:
-   ```bash
-   git clone https://github.com/JohnDMCmaster/libxgecu.git
-   cd libxgecu
-   ```
+Clone with submodules to include `libxgecu` and `minipro` automatically:
 
-2. Instale o Poetry:
-   ```bash
-   curl -sSL https://install.python-poetry.org | python3 -
-   export PATH="$HOME/.local/bin:$PATH"
-   ```
+```bash
+git clone --recursive https://github.com/youruser/UniversalProgrammerT48.git
+cd UniversalProgrammerT48
+```
 
-3. Instale dependências e entre no ambiente virtual:
-   ```bash
-   poetry install
-   poetry shell
-   ```
+> Already cloned? Initialize submodules:
+> ```bash
+> git submodule update --init --recursive
+> ```
 
 ---
 
-## 🔄 Atualizar firmware
+## ⚙️ Installing with Poetry
 
-1. Copie o arquivo `updateT48.dat` desejado para o diretório atual.
+1. Install Poetry:
 
-2. Execute:
-   ```bash
-   poetry run t48_update updateT48.dat
-   ```
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+export PATH="$HOME/.local/bin:$PATH"
+```
 
-   ⚠️ O gravador precisa estar conectado via USB.
+2. Install project dependencies:
+
+```bash
+poetry install
+```
+
+3. Activate virtual environment:
+
+```bash
+poetry shell
+```
 
 ---
 
-## 🔍 Testar o funcionamento com `minipro`
+## 🔄 Firmware Update
 
-### Instalar:
+> ⚠️ Make sure your TL866/T48 programmer is connected via USB.
+
+1. Unzip the firmware:
+
+```bash
+unzip Firmware/UpdateT48-1278.zip -d Firmware/
+```
+
+2. Update using the local firmware:
+
+```bash
+poetry run t48_update Firmware/UpdateT48-1278.dat
+```
+
+3. Check the version:
+
+```bash
+poetry run t48_version
+```
+
+Expected:
+```
+Firmware Version: 01.1.32 (0x120)
+```
+
+---
+
+## 🧪 Testing with `minipro`
+
+### Option 1: Install system-wide
 
 ```bash
 sudo apt install minipro
 ```
 
-### Fazer dump de um chip (exemplo: 24c02):
+### Option 2: Compile from submodule source
+
+```bash
+cd tools/minipro
+make
+sudo make install
+```
+
+Then dump data from an EEPROM:
 
 ```bash
 minipro -p "AT24C02" -r dump.hex
@@ -68,16 +118,14 @@ minipro -p "AT24C02" -r dump.hex
 
 ---
 
-## 👁️ Visualizar arquivo HEX
+## 👁️ View HEX Dump
 
-Você pode abrir o `dump.hex` com editores como:
-
-- `xxd` (terminal):
+- With terminal:
   ```bash
   xxd dump.hex | less
   ```
 
-- `GHex` (interface gráfica):
+- With GUI:
   ```bash
   sudo apt install ghex
   ghex dump.hex
@@ -85,62 +133,35 @@ Você pode abrir o `dump.hex` com editores como:
 
 ---
 
-## ✅ Verificar versão do firmware
+## ⬇️ Firmware Downgrade (if needed)
 
-Dentro do ambiente virtual `poetry`:
+If `minipro` fails due to firmware incompatibility:
+
 ```bash
+7z x XgproV1132_Setup.exe -oXgproV1132
+poetry run t48_update ./XgproV1132/updateT48.dat
 poetry run t48_version
 ```
 
 ---
 
-## ℹ️ Dicas
+## 🧩 Useful Commands & Tips
 
-- Use `find` para localizar firmwares:
+- Locate firmware files:
   ```bash
   find . -iname "*updateT48.dat*"
   ```
 
-- Se necessário, extraia `.exe` do XGPro com:
+- Extract `.exe` firmware files:
   ```bash
-  7z x XgproV1255_Setup.exe -oXgproV1255
+  7z x XgproV1278_Setup.exe -oXgproV1278
   ```
 
 ---
 
-## 🧩 Referências
+## 🔗 References
 
-- [libxgecu no GitHub](https://github.com/JohnDMCmaster/libxgecu)
-- [minipro no Linux](https://gitlab.com/DavidGriffith/minipro)
+- [libxgecu on GitHub](https://github.com/JohnDMCmaster/libxgecu)
+- [minipro on GitLab](https://gitlab.com/DavidGriffith/minipro)
 
----
-
-## ⚠️ Compatibilidade de Firmware
-
-Para que a gravação ou leitura funcione corretamente, **o firmware do gravador precisa estar na versão `01.1.32 (0x120)`**.
-
-Se você estiver com uma versão superior e encontrar erros, **é necessário realizar um downgrade** do firmware.
-
-### Como fazer downgrade
-
-1. Encontre o arquivo `updateT48.dat` correspondente à versão `01.1.32`. Esse arquivo pode ser extraído de versões antigas do XGPro usando o `7z`:
-
-   ```bash
-   7z x XgproV1132_Setup.exe -oXgproV1132
-   ```
-
-2. Em seguida, utilize o comando:
-
-   ```bash
-   poetry run t48_update updateT48.dat
-   ```
-
-   Certifique-se de que o gravador está conectado via USB.
-
-3. Confirme a versão do firmware após o procedimento com:
-
-   ```bash
-   poetry run t48_version
-   ```
-
-Se a versão correta estiver ativa, o `minipro` e outras ferramentas compatíveis funcionarão normalmente.
+Made with ❤️ for Linux hardware hackers.

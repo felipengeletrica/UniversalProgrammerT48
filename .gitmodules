@@ -1,0 +1,6 @@
+[submodule "tools/libxgecu"]
+	path = tools/libxgecu
+	url = https://github.com/JohnDMCmaster/libxgecu.git
+[submodule "tools/minipro"]
+	path = tools/minipro
+	url = https://gitlab.com/DavidGriffith/minipro.git
