@@ -112,3 +112,35 @@ poetry run t48_version
 
 - [libxgecu no GitHub](https://github.com/JohnDMCmaster/libxgecu)
 - [minipro no Linux](https://gitlab.com/DavidGriffith/minipro)
+
+---
+
+## ⚠️ Compatibilidade de Firmware
+
+Para que a gravação ou leitura funcione corretamente, **o firmware do gravador precisa estar na versão `01.1.32 (0x120)`**.
+
+Se você estiver com uma versão superior e encontrar erros, **é necessário realizar um downgrade** do firmware.
+
+### Como fazer downgrade
+
+1. Encontre o arquivo `updateT48.dat` correspondente à versão `01.1.32`. Esse arquivo pode ser extraído de versões antigas do XGPro usando o `7z`:
+
+   ```bash
+   7z x XgproV1132_Setup.exe -oXgproV1132
+   ```
+
+2. Em seguida, utilize o comando:
+
+   ```bash
+   poetry run t48_update updateT48.dat
+   ```
+
+   Certifique-se de que o gravador está conectado via USB.
+
+3. Confirme a versão do firmware após o procedimento com:
+
+   ```bash
+   poetry run t48_version
+   ```
+
+Se a versão correta estiver ativa, o `minipro` e outras ferramentas compatíveis funcionarão normalmente.
