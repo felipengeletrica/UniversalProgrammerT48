@@ -1,8 +1,25 @@
 # 🔧 Hack the Programmer: TL866/T48 Firmware & Dump Tools on Linux
 
-> A self-contained Linux tool to update TL866A/CS/T48 firmware and test dumps using `libxgecu` and `minipro`.
+> A self-contained Linux tool to update TL866A/CS/T48 firmware and perform EEPROM dumps using `libxgecu` and `minipro`.
+
+⚠️ **Disclaimer:** The manufacturer of the TL866/T48 programmer does **not provide official Linux support**.  
+This tutorial shows how to bypass that limitation using open-source tools and firmware adjustments.
+
+✳️ To enable compatibility with tools like `minipro` on Linux, you **must downgrade the firmware** of the programmer to version `01.1.32 (0x120)` — this version is known to work reliably.
 
 ---
+
+## 📋 Quick Checklist
+
+Before you begin, make sure you:
+
+✅ Have a TL866A, TL866CS or T48 programmer  
+✅ Have extracted the correct firmware file (`UpdateT48-1278.dat`)  
+✅ Have Python 3.12 and Poetry installed  
+✅ Are using Linux (Ubuntu/Debian recommended)  
+✅ Have installed required development packages (USB, build tools)  
+✅ Have connected the programmer to your PC via USB  
+✅ Are ready to run `t48_update` and confirm version `01.1.32`
 
 ## 📸 Supported Programmer
 
